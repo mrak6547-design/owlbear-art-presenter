@@ -1,16 +1,16 @@
 {
   "manifest_version": 1,
   "name": "Art Show",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Показ арта NPC, локаций и артефактов игрокам на весь экран.",
   "author": "Art Show",
-  "icon": "./icon.svg",
+  "icon": "https://mrak6547-design.github.io/owlbear-art-presenter/icon.svg",
   "action": {
     "title": "Art Show",
-    "icon": "./icon.svg",
-    "popover": "./index.html",
+    "icon": "https://mrak6547-design.github.io/owlbear-art-presenter/icon.svg",
+    "popover": "https://mrak6547-design.github.io/owlbear-art-presenter/index.html",
     "height": 620,
     "width": 430
   },
-  "background_url": "./background.html"
+  "background_url": "https://mrak6547-design.github.io/owlbear-art-presenter/background.html"
 }
