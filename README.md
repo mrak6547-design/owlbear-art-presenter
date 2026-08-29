@@ -1,21 +1,11 @@
-# Art Presenter v0.3.0
+# Art Presenter 0.3.1
 
-Owlbear Rodeo extension for showing NPC portraits, location art, artifacts and other illustrations in a near-fullscreen viewer.
+Owlbear Rodeo extension for presenting NPCs, locations and artifacts to the table.
 
-## Features
-- GM can show an image to everyone or only to themselves.
-- Players can close the image only for themselves.
-- GM can close the current image for everyone.
-- Shared room library with categories, search and up to 30 recent images.
-- Per-device favorites.
-- Silver, gold, dark or no frame.
-- Mobile-friendly viewer with safe-area support.
-- Static GitHub Pages deployment; no build step is required for this package.
+- GM selects an image from the Owlbear asset picker.
+- The image opens nearly full screen for all players.
+- Players close it locally.
+- GM can close it for everyone.
+- Local GM library with search, categories and frame styles.
 
-## Install
-1. Upload all files in this folder to the root of a public GitHub repository.
-2. Enable GitHub Pages for the `main` branch and `/ (root)`.
-3. In Owlbear Rodeo, add an extension using the published `manifest.json` URL.
-
-For a repository named `owlbear-art-presenter` owned by `YOUR-NAME`, the URL is:
-`https://YOUR-NAME.github.io/owlbear-art-presenter/manifest.json`
+Install using the URL of `manifest.json` hosted over HTTPS.
