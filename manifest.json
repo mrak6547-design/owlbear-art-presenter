@@ -6,8 +6,8 @@
   "author": "Art Presenter",
   "action": {
     "title": "Art Presenter",
-    "icon": "./icon.svg",
-    "popover": "./index.html",
+    "icon": "https://mrak6547-design.github.io/owlbear-art-presenter/icon.svg",
+    "popover": "https://mrak6547-design.github.io/owlbear-art-presenter/index.html",
     "width": 420,
     "height": 720
   }
