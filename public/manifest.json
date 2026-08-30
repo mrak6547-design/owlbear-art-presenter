@@ -1,0 +1,19 @@
+{
+  "name": "Занавес — показ арта игрокам",
+  "id": "ru.curtain.showcase",
+  "version": "1.0.0",
+  "manifest_version": 1,
+  "description": "Мастер одним кликом показывает арты NPC, локаций и артефактов почти на весь экран игроков — в золотой раме, с крестиком. Работает на ПК и телефонах.",
+  "author": "Curtain Call",
+  "icon": "/icon.png",
+  "action": {
+    "title": "Занавес",
+    "icon": "/icon.png",
+    "popover": "/?mode=action",
+    "height": 700,
+    "width": 440
+  },
+  "background": {
+    "path": "/background.js"
+  }
+}
