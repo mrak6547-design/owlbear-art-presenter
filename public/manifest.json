@@ -13,6 +13,6 @@
     "width": 440
   },
   "background": {
-    "path": "/background.js"
+    "path": "background_url": "/background.html"
   }
 }
