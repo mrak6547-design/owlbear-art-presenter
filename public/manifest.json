@@ -1,16 +1,16 @@
 {
   "manifest_version": 1,
-  "name": "Art Show",
-  "version": "1.1.1",
+  "name": "Занавес",
+  "version": "1.1.2",
   "description": "Полноэкранный показ NPC, локаций и артефактов.",
   "author": "Art Show",
   "icon": "/icon.png",
   "action": {
-    "title": "Art Show",
+    "title": "Занавес",
     "icon": "/icon.png",
-    "popover": "/",
-    "height": 620,
-    "width": 430
+    "popover": "/?mode=action",
+    "height": 700,
+    "width": 440
   },
-  "background_url": "/background.html"
+  "background_url": "/background.js"
 }
