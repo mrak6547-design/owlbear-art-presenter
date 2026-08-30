@@ -1,6 +1,5 @@
 {
   "name": "Занавес — показ арта игрокам",
-  "id": "ru.curtain.showcase",
   "version": "1.0.0",
   "manifest_version": 1,
   "description": "Полноэкранный показ NPC, локаций и артефактов.",
