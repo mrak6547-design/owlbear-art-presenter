@@ -4,7 +4,7 @@
    2. Слушает рассылку канала расширения на КАЖДОМ клиенте.
    3. Открывает/закрывает полноэкранный модал с артом у всех игроков. */
 
-import OBR from "@owlbear-rodeo/sdk";
+import OBR from "https://esm.sh/@owlbear-rodeo/sdk";
 
 const EXT_ID = "zanaves";
 const SHOW_KEY = `${EXT_ID}/current`;
