@@ -4,26 +4,26 @@
    2. Слушает рассылку канала расширения на КАЖДОМ клиенте.
    3. Открывает/закрывает полноэкранный модал с артом у всех игроков. */
 
-import OBR from "https://esm.sh/@owlbear-rodeo/sdk";
+import OBR from "@owlbear-rodeo/sdk";
 
-const ID = "zanaves";
-const KEY = `${ID}/current`;
-const MODAL_ID = `${ID}/viewer`;
+const EXT_ID = "zanaves";
+const SHOW_KEY = `${EXT_ID}/current`;
+const MODAL_ID = `${EXT_ID}/viewer`;
 
 let role = "PLAYER";
 let lastToken = null;
 
 function buildViewerUrl(data) {
-  const p = new URLSearchParams({
+  const params = new URLSearchParams({
     mode: "viewer",
     src: data.src,
     title: data.title || "",
     kind: data.kind || "location",
     by: data.by || "",
-    token: data.token,
+    token: data.token || "",
   });
 
-  return `/?${p.toString()}`;
+  return `/?${params.toString()}`;
 }
 
 async function openViewer(data) {
@@ -36,8 +36,8 @@ async function openViewer(data) {
       hideBackdrop: true,
       disablePointerEvents: false,
     });
-  } catch (e) {
-    console.error("[Занавес] Не удалось открыть модал", e);
+  } catch (err) {
+    console.error("[Занавес] modal open failed", err);
   }
 }
 
@@ -48,7 +48,7 @@ async function closeViewer() {
 }
 
 async function sync(metadata) {
-  const current = metadata?.[KEY];
+  const current = metadata?.[SHOW_KEY] ?? null;
 
   if (!current) {
     lastToken = null;
@@ -75,4 +75,5 @@ OBR.onReady(async () => {
   OBR.room.onMetadataChange(sync);
 
   await sync(await OBR.room.getMetadata());
+});data());
 });
