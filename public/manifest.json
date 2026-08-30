@@ -3,7 +3,7 @@
   "id": "ru.curtain.showcase",
   "version": "1.0.0",
   "manifest_version": 1,
-  "description": "Мастер одним кликом показывает арты NPC, локаций и артефактов почти на весь экран игроков — в золотой раме, с крестиком. Работает на ПК и телефонах.",
+  "description": "Полноэкранный показ NPC, локаций и артефактов.",
   "author": "Curtain Call",
   "icon": "/icon.png",
   "action": {
