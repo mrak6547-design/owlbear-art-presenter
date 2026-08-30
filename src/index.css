@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  background: #1a1a2e;
+  color: white;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d20;
+}
+::-webkit-scrollbar-thumb {
+  background: #4a3800;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7c5a1e;
+}
+
+/* Image drag prevention */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
