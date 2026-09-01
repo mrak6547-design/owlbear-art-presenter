@@ -1,11 +1,14 @@
-import type { ShowRequest } from "./artworks";
+import type { Image, Item } from "@owlbear-rodeo/sdk";
+import type { ShowRequest, ShowState } from "./artworks";
 
-/** Идентификатор расширения */
+/** Идентификатор расширения. */
 export const EXT_ID = "zanaves";
-/** Ключ в metadata комнаты */
-export const SHOW_KEY = `${EXT_ID}/current`;
-/** ID полноэкранного модала */
+/** Ключ текущего показа в metadata комнаты. */
+export const SHOW_KEY = `${EXT_ID}/state`;
+/** ID полноэкранного модала у игроков. */
 export const MODAL_ID = `${EXT_ID}/viewer`;
+/** ID пункта контекстного меню. */
+export const CONTEXT_ID = `${EXT_ID}/show-art`;
 
 export type OBRClient = typeof import("@owlbear-rodeo/sdk").default;
 
@@ -14,32 +17,83 @@ export interface SceneArt {
   name: string;
   url: string;
   layer: string;
+  kind: string;
 }
 
-function guessKind(layer: string): string {
-  const l = layer.toUpperCase();
+/** «Догадываемся» о типе арта по слою, на котором лежит картинка. */
+export function kindFromLayer(layer: string): string {
+  const l = String(layer).toUpperCase();
 
-  if (l === "CHARACTER" || l === "MOUNT") return "npc";
+  if (l === "CHARACTER" || l === "MOUNT" || l === "ATTACHMENT")
+    return "npc";
 
-  if (
-    l === "MAP" ||
-    l === "PROP" ||
-    l === "DRAWING" ||
-    l === "GRID"
-  ) {
-    return "location";
-  }
+  if (l === "MAP" || l === "GRID") return "map";
 
-  return "artifact";
+  if (l === "DRAWING") return "location";
+
+  if (l === "PROP") return "artifact";
+
+  return "encounter";
 }
 
-/** Ждём, пока приложение окажется внутри Owlbear Rodeo. */
+export function isImageItem(item: Item): item is Image {
+  return item.type === "IMAGE";
+}
+
+/** Выбираем лучшую картинку из выделения: самую «крупную». */
+export function pickImage(items: Item[]): Image | null {
+  return (
+    items
+      .filter(isImageItem)
+      .sort((a, b) => {
+        const areaA = (a.image?.width ?? 0) * (a.image?.height ?? 0);
+        const areaB = (b.image?.width ?? 0) * (b.image?.height ?? 0);
+        return areaB - areaA || b.zIndex - a.zIndex;
+      })[0] ?? null
+  );
+}
+
+/** Проверка значения из metadata: это наш текущий показ? */
+export function parseShowState(value: unknown): ShowState | null {
+  if (!value || typeof value !== "object") return null;
+
+  const v = value as Record<string, unknown>;
+
+  if (typeof v.src !== "string" || !v.src) return null;
+  if (typeof v.token !== "string" || !v.token) return null;
+
+  return {
+    src: v.src,
+    title: typeof v.title === "string" ? v.title : "Без названия",
+    kind: typeof v.kind === "string" && v.kind ? v.kind : "scene",
+    by: typeof v.by === "string" ? v.by : undefined,
+    token: v.token,
+    createdAt: typeof v.createdAt === "number" ? v.createdAt : Date.now(),
+  };
+}
+
+/** URL полноэкранной страницы показа (относительно корня расширения). */
+export function makeViewerUrl(req: ShowRequest): string {
+  const base = new URL("index.html", window.location.href);
+  base.search = new URLSearchParams({
+    mode: "viewer",
+    src: req.src,
+    title: req.title ?? "",
+    kind: req.kind ?? "",
+    by: req.by ?? "",
+  }).toString();
+  return base.toString();
+}
+
+/** Ждём, пока страница окажется внутри Owlbear Rodeo. */
 export async function waitForOwlbear(
-  timeout = 1800,
+  timeoutMs = 2500,
 ): Promise<OBRClient | null> {
   try {
     const mod = await import("@owlbear-rodeo/sdk");
     const OBR = mod.default;
+
+    if (!OBR.isAvailable) return null;
 
     return await new Promise<OBRClient | null>((resolve) => {
       let settled = false;
@@ -49,11 +103,10 @@ export async function waitForOwlbear(
           settled = true;
           resolve(null);
         }
-      }, timeout);
+      }, timeoutMs);
 
       OBR.onReady(() => {
         if (settled) return;
-
         settled = true;
         clearTimeout(timer);
         resolve(OBR);
@@ -65,100 +118,91 @@ export async function waitForOwlbear(
 }
 
 export async function getRole(
-  OBR: OBRClient,
+  client: OBRClient,
 ): Promise<"GM" | "PLAYER"> {
   try {
-    return (await OBR.player.getRole()) === "GM"
-      ? "GM"
-      : "PLAYER";
+    return (await client.player.getRole()) === "GM" ? "GM" : "PLAYER";
   } catch {
     return "PLAYER";
   }
 }
 
 export async function getPlayerName(
-  OBR: OBRClient,
+  client: OBRClient,
 ): Promise<string> {
   try {
-    return await OBR.player.getName();
+    const name = await client.player.getName();
+    return name?.trim() || "Мастер";
   } catch {
     return "Мастер";
   }
 }
 
-/** Все картинки сцены */
+/** Все IMAGE-объекты текущей сцены (картинки из хранилища/сцены). */
 export async function listSceneArts(
-  OBR: OBRClient,
+  client: OBRClient,
 ): Promise<SceneArt[]> {
   try {
-    const items = await OBR.scene.items.getItems(
-      (item) => item.type === "IMAGE",
+    const items = await client.scene.items.getItems(
+      (item): item is Image => item.type === "IMAGE",
     );
 
     return items
-      .map((item) => {
-        const img = item as unknown as {
-          image: { url: string };
-        };
-
+      .map((item): SceneArt => {
+        const layer = String(item.layer);
         return {
           id: item.id,
           name: item.name?.trim() || "Без названия",
-          url: img.image.url,
-          layer: String(item.layer),
+          url: item.image.url,
+          layer,
+          kind: kindFromLayer(layer),
         };
       })
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, "ru"),
-      );
+      .sort((a, b) => a.name.localeCompare(b.name, "ru"));
   } catch {
     return [];
   }
 }
 
-/** Показать всем */
-export async function broadcastShow(
-  OBR: OBRClient,
+/** Пишем состояние показа в metadata комнаты — увидят все клиенты. */
+export async function setShowState(
+  client: OBRClient,
   req: ShowRequest,
+): Promise<ShowState> {
+  const state: ShowState = {
+    ...req,
+    token: crypto.randomUUID(),
+    createdAt: Date.now(),
+  };
+
+  await client.room.setMetadata({ [SHOW_KEY]: state });
+  return state;
+}
+
+/** Снимаем показ у всех. */
+export async function clearShowState(
+  client: OBRClient,
 ): Promise<void> {
-  await OBR.room.setMetadata({
-    [SHOW_KEY]: {
-      ...req,
-      token: crypto.randomUUID(),
-      createdAt: Date.now(),
-      gmOnly: false,
-    },
+  await client.room.setMetadata({ [SHOW_KEY]: null });
+}
+
+export async function readShowState(
+  client: OBRClient,
+): Promise<ShowState | null> {
+  try {
+    const metadata = await client.room.getMetadata();
+    return parseShowState(metadata?.[SHOW_KEY]);
+  } catch {
+    return null;
+  }
+}
+
+/** Подписка на изменение показа. Возвращает отписку. */
+export function onShowStateChange(
+  client: OBRClient,
+  callback: (state: ShowState | null) => void,
+): () => void {
+  return client.room.onMetadataChange((metadata) => {
+    callback(parseShowState(metadata?.[SHOW_KEY]));
   });
-}
-
-/** Скрыть у всех */
-export async function broadcastHide(
-  OBR: OBRClient,
-): Promise<void> {
-  await OBR.room.setMetadata({
-    [SHOW_KEY]: null,
-  });
-}
-
-/**
- * Совместимость.
- * Теперь эти функции ничего не открывают —
- * полноэкранным показом управляет background.js.
- */
-
-export async function openShowModal(
-  _OBR: OBRClient,
-  _req: ShowRequest,
-): Promise<void> {
-  return;
-}
-
-export async function closeShowModal(
-  _OBR: OBRClient,
-): Promise<void> {
-  return;
-}
-
-export function kindFromLayer(layer: string): string {
-  return guessKind(layer);
 }

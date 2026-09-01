@@ -1,19 +1,35 @@
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { viteSingleFile } from "vite-plugin-singlefile";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
-// https://vite.dev/config/
+// Собираем расширение для Owlbear Rodeo:
+//  - index.html      → приложение расширения (popover мастера / полноэкранный показ)
+//  - background.html → фоновый iframe (контекстное меню + синхронизация показа)
 export default defineConfig({
-  plugins: [react(), tailwindcss(), viteSingleFile()],
+  base: "./",
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
+      "@": path.resolve(rootDir, "src"),
     },
+  },
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+    target: "es2020",
+    rollupOptions: {
+      input: {
+        app: path.resolve(rootDir, "index.html"),
+        background: path.resolve(rootDir, "background.html"),
+      },
+    },
+  },
+  server: {
+    host: true,
+    allowedHosts: true,
   },
 });
