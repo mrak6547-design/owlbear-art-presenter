@@ -15,21 +15,79 @@ NPC, локацию, артефакт, карту — любую картинк�
 
 ## Быстрая установка
 
-**Самый простой способ — GitHub Pages (уже настроен в этом репозитории):**
+**Способ 1 — Vercel Drop (самый быстрый, без Git и терминала):**
 
-1. В этом репозитории смержите запрос на слияние (Pull Request) — в нём лежит
-   папка `plugin/` с уже собранным плагином. Это одна зелёная кнопка
-   **Merge pull request**.
+1. Соберите папку с готовым плагином: `npm run build` → `dist/`
+   (или возьмите готовую папку `zanaves/` из архива).
+2. Откройте **vercel.com/drop** и перетащите папку `zanaves` (или архив `.zip`)
+   прямо в окно браузера.
+3. Выберите команду, введите имя проекта и нажмите **Deploy** — через ~15
+   секунд появится адрес вида `https://что-то.vercel.app`. Скопируйте его.
+4. В Owlbear: **Add Extension** → вставьте
+   `https://что-то.vercel.app/manifest.json` → включите тумблер «Занавес» →
+   **Ctrl+Shift+R**.
+
+Vercel отдаёт статические файлы с CORS-заголовком (`Access-Control-Allow-Origin: *`),
+поэтому отдельный файл `_headers` ему не нужен, а ошибка «Failed to fetch»
+не возникает. В `vercel.json` проекта уже прописаны заголовки и команда
+сборки — если позже подключите репозиторий к Vercel (Git-интеграция),
+деплой будет автоматическим при каждом пуше.
+
+**Способ 2 — Netlify Drop (запасной):**
+
+1. Откройте **app.netlify.com/drop** и перетащите папку `zanaves` в окно.
+2. Через ~15 секунд появится адрес `https://что-то.netlify.app`.
+3. В Owlbear: **Add Extension** → `https://что-то.netlify.app/manifest.json`
+   → включите тумблер → **Ctrl+Shift+R**.
+   (Файл `_headers` в папке обязателен — он уже включён.)
+
+**Способ 3 — GitHub Pages:**
+
+1. **Обновите файл `plugin/manifest.json` в репозитории** (см. «Как исправить манифест» ниже — одну минуту).
 2. Подождите 1–2 минуты, пока GitHub Pages соберёт сайт заново.
 3. Откройте комнату Owlbear Rodeo → **⊕ / Add Extension** → вставьте ссылку:
    `https://mrak6547-design.github.io/owlbear-art-presenter/plugin/manifest.json`
-4. Включите расширение (тумблер рядом с «Занавес»).
+4. Включите расширение (тумблер рядом с «Занавес») и обновите страницу (F5).
 
-Всё! У мастера появится кнопка **Занавес** в верхнем левом углу комнаты.
+Всё! У мастера появится кнопка **Занавес** слева вверху, а иконка — в панели расширений.
+
+### Как исправить манифест (важно!)
+
+Owlbear Rodeo открывает пути из манифеста **от корня домена**, а не от папки
+с манифестом. Поэтому нельзя писать просто `index.html` — нужно
+`/owlbear-art-presenter/plugin/index.html`. Откройте
+`plugin/manifest.json` в GitHub (кнопка ✏️ «Edit this file»), вставьте
+содержимое ниже и нажмите **Commit changes**:
+
+```json
+{
+  "manifest_version": 1,
+  "name": "Занавес",
+  "version": "2.0.1",
+  "description": "Показ артов NPC, локаций и артефактов игрокам почти на весь экран: золотая рама, подпись, крестик. ПК и телефоны.",
+  "author": "Art Show",
+  "homepage_url": "https://github.com/mrak6547-design/owlbear-art-presenter",
+  "icon": "/owlbear-art-presenter/plugin/icon.png",
+  "action": {
+    "title": "Занавес",
+    "icon": "/owlbear-art-presenter/plugin/icon.png",
+    "popover": "/owlbear-art-presenter/plugin/index.html?mode=action",
+    "width": 460,
+    "height": 720
+  },
+  "background_url": "/owlbear-art-presenter/plugin/background.html"
+}
+```
+
+При сборке (`npm run build`) это делается автоматически скриптом
+`scripts/postbuild.mjs` — он заменяет относительные пути на
+`BASE_PATH` (по умолчанию `/owlbear-art-presenter/plugin`). Если плагин
+размещён в другом месте — задайте `BASE_PATH` при сборке:
+`BASE_PATH=/ваш/путь npm run build`.
 
 **Альтернатива — любой статический хостинг:**
 
-1. Соберите проект: `npm run build` (появится папка `dist/`).
+1. Соберите проект: `BASE_PATH=/имя-папки npm run build` (появится `dist/`).
 2. Загрузите содержимое `dist/` на Netlify, Vercel, Cloudflare Pages.
 3. Скопируйте ссылку на `manifest.json` — она заканчивается на `/manifest.json`.
 4. В комнате Owlbear: **⊕ / Add Extension** → вставьте ссылку → включите.
