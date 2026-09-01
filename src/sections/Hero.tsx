@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Drama, Download, ChevronDown } from "lucide-react";
 import { DEMO_ARTWORKS } from "../lib/artworks";
-import { Dust } from "../components/FullscreenArt";
 
 export function Hero() {
   return (
@@ -17,9 +16,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-ink-950/70 via-transparent to-ink-950/70" />
         <div className="vignette absolute inset-0" />
       </div>
-      <Dust count={18} />
-
-      {/* Контент */}
+{/* Контент */}
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-6 pt-28 pb-16 text-center">
         <motion.p
           className="mb-6 flex items-center gap-3 text-[11px] font-bold tracking-[0.38em] text-gold-300/90 uppercase"
