@@ -75,5 +75,4 @@ OBR.onReady(async () => {
   OBR.room.onMetadataChange(sync);
 
   await sync(await OBR.room.getMetadata());
-});data());
 });
