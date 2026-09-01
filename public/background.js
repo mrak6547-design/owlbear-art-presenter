@@ -15,7 +15,7 @@ let lastToken = null;
 
 function buildViewerUrl(data) {
   const params = new URLSearchParams({
-    mode: "viewer",
+    mode: "modal",
     src: data.src,
     title: data.title || "",
     kind: data.kind || "location",
