@@ -15,10 +15,50 @@ NPC, локацию, артефакт, карту — любую картинк�
 
 ## Быстрая установка
 
-**Вариант А — GitHub Pages (готовый workflow в репозитории):**
+**Вариант А — GitHub Pages (рекомендуется):**
 
-1. В репозитории GitHub: **Settings → Pages → Source: GitHub Actions**.
-2. Запушите `main` (или нажмите **Run workflow** в Actions) — плагин
+1. В репозитории создайте `.github/workflows/pages.yml` со следующим
+   содержимым, затем в GitHub: **Settings → Pages → Source: GitHub Actions**:
+
+   ```yaml
+   name: Deploy Extension to GitHub Pages
+   on:
+     push:
+       branches: [main]
+     workflow_dispatch:
+   permissions:
+     contents: read
+     pages: write
+     id-token: write
+   concurrency:
+     group: pages
+     cancel-in-progress: true
+   jobs:
+     build:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v4
+         - uses: actions/setup-node@v4
+           with:
+             node-version: 22
+             cache: npm
+         - run: npm ci
+         - run: npm run build
+         - uses: actions/upload-pages-artifact@v3
+           with:
+             path: dist
+     deploy:
+       needs: build
+       runs-on: ubuntu-latest
+       environment:
+         name: github-pages
+         url: ${{ steps.deployment.outputs.page_url }}
+       steps:
+         - id: deployment
+           uses: actions/deploy-pages@v4
+   ```
+
+2. Запушите в `main` (или нажмите **Run workflow** в Actions) — плагин
    соберётся и опубликуется.
 3. Ссылка для установки:
    `https://<пользователь>.github.io/<репозиторий>/manifest.json`.
