@@ -1,0 +1,16 @@
+{
+  "manifest_version": 1,
+  "name": "Занавес",
+  "version": "2.0.0",
+  "description": "Показ артов NPC, локаций и артефактов игрокам почти на весь экран: золотая рама, подпись, крестик. ПК и телефоны.",
+  "author": "Art Show",
+  "icon": "icon.png",
+  "action": {
+    "title": "Занавес",
+    "icon": "icon.png",
+    "popover": "index.html?mode=action",
+    "width": 460,
+    "height": 720
+  },
+  "background_url": "background.html"
+}

@@ -15,68 +15,24 @@ NPC, локацию, артефакт, карту — любую картинк�
 
 ## Быстрая установка
 
-**Вариант А — GitHub Pages (рекомендуется):**
+**Самый простой способ — GitHub Pages (уже настроен в этом репозитории):**
 
-1. В репозитории создайте `.github/workflows/pages.yml` со следующим
-   содержимым, затем в GitHub: **Settings → Pages → Source: GitHub Actions**:
+1. В этом репозитории смержите запрос на слияние (Pull Request) — в нём лежит
+   папка `plugin/` с уже собранным плагином. Это одна зелёная кнопка
+   **Merge pull request**.
+2. Подождите 1–2 минуты, пока GitHub Pages соберёт сайт заново.
+3. Откройте комнату Owlbear Rodeo → **⊕ / Add Extension** → вставьте ссылку:
+   `https://mrak6547-design.github.io/owlbear-art-presenter/plugin/manifest.json`
+4. Включите расширение (тумблер рядом с «Занавес»).
 
-   ```yaml
-   name: Deploy Extension to GitHub Pages
-   on:
-     push:
-       branches: [main]
-     workflow_dispatch:
-   permissions:
-     contents: read
-     pages: write
-     id-token: write
-   concurrency:
-     group: pages
-     cancel-in-progress: true
-   jobs:
-     build:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v4
-         - uses: actions/setup-node@v4
-           with:
-             node-version: 22
-             cache: npm
-         - run: npm ci
-         - run: npm run build
-         - uses: actions/upload-pages-artifact@v3
-           with:
-             path: dist
-     deploy:
-       needs: build
-       runs-on: ubuntu-latest
-       environment:
-         name: github-pages
-         url: ${{ steps.deployment.outputs.page_url }}
-       steps:
-         - id: deployment
-           uses: actions/deploy-pages@v4
-   ```
+Всё! У мастера появится кнопка **Занавес** в верхнем левом углу комнаты.
 
-2. Запушите в `main` (или нажмите **Run workflow** в Actions) — плагин
-   соберётся и опубликуется.
-3. Ссылка для установки:
-   `https://<пользователь>.github.io/<репозиторий>/manifest.json`.
-
-**Вариант Б — любой статический хостинг:**
+**Альтернатива — любой статический хостинг:**
 
 1. Соберите проект: `npm run build` (появится папка `dist/`).
-2. Загрузите содержимое `dist/` на GitHub Pages, Netlify, Vercel,
-   Cloudflare Pages — подойдёт любой.
-3. Скопируйте ссылку на `manifest.json`
-   (например, `https://ваш-домен/owlbear-art-presenter/manifest.json`).
-
-**Установка в Owlbear Rodeo:**
-
-1. В комнате нажмите **⊕ / Add Extension** и вставьте ссылку на `manifest.json`.
-2. Включите расширение в комнате (тумблер рядом с «Занавес»).
-
-Всё: у мастера появится кнопка **Занавес** в верхнем левом углу комнаты.
+2. Загрузите содержимое `dist/` на Netlify, Vercel, Cloudflare Pages.
+3. Скопируйте ссылку на `manifest.json` — она заканчивается на `/manifest.json`.
+4. В комнате Owlbear: **⊕ / Add Extension** → вставьте ссылку → включите.
 
 ## Как пользоваться
 
