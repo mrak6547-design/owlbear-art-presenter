@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="zg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5dfa2"/>
+      <stop offset="0.5" stop-color="#c9a227"/>
+      <stop offset="1" stop-color="#8a6a2a"/>
+    </linearGradient>
+    <linearGradient id="zc" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8f2727"/>
+      <stop offset="1" stop-color="#53100f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- тёмная подложка с золотой рамкой -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#120d08"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="url(#zg)" stroke-width="3"/>
+
+  <!-- занавес слева -->
+  <path d="M11 15 C19 22 19 33 11 41 L11 50 L29.5 50 L29.5 41 C23 33 23 22 29.5 15 Z" fill="url(#zc)"/>
+  <!-- занавес справа -->
+  <path d="M53 15 C45 22 45 33 53 41 L53 50 L34.5 50 L34.5 41 C41 33 41 22 34.5 15 Z" fill="url(#zc)"/>
+
+  <!-- золотые кисти по краям занавеса -->
+  <path d="M28.6 16 q5.5 16 0 33" fill="none" stroke="url(#zg)" stroke-width="1.6" opacity="0.9"/>
+  <path d="M35.4 16 q-5.5 16 0 33" fill="none" stroke="url(#zg)" stroke-width="1.6" opacity="0.9"/>
+
+  <!-- подхваты -->
+  <circle cx="16.5" cy="30.5" r="3.2" fill="url(#zg)"/>
+  <circle cx="47.5" cy="30.5" r="3.2" fill="url(#zg)"/>
+
+  <!-- сцена у пола -->
+  <path d="M11 50 L53 50" stroke="url(#zg)" stroke-width="3" stroke-linecap="round"/>
+</svg>
